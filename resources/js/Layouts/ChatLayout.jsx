@@ -1,5 +1,5 @@
 import { usePage } from '@inertiajs/react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { useEffect } from 'react';
 
 const ChatLayout = ({ children }) => {
     const page = usePage();
@@ -9,13 +9,28 @@ const ChatLayout = ({ children }) => {
     console.log(conversations);
     console.log(selectedConversation);
 
+    useEffect(() => {
+        Echo.join('online')
+            .here((users) => {
+                console.log('here', users);
+            })
+            .joining((user) => {
+                console.log('joining', user);
+            })
+            .leaving((user) => {
+                console.log('leaving', user);
+            }).error((error) => {
+                console.error('error', error);
+            });
+    }, []);
+
     return(
-        <AuthenticatedLayout>
+        <>
             ChatLayout
             <div>
                 {children}
             </div>
-        </AuthenticatedLayout>
+        </>
     );
 }
 

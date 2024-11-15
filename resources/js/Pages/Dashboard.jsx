@@ -1,9 +1,20 @@
 import ChatLayout from '@/Layouts/ChatLayout';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
-export default function Dashboard({ auth }) {
+function Dashboard({ auth }) {
     return (
-        <ChatLayout>
+        <>
             Messages
-        </ChatLayout>
+        </>
     );
 }
+
+Dashboard.layout = (page) => {
+    return (
+        <AuthenticatedLayout user={page.props.auth.user}>
+            <ChatLayout children={page} />
+        </AuthenticatedLayout>
+    );
+}
+
+export default Dashboard;
