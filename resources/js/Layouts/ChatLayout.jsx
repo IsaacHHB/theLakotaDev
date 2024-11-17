@@ -1,5 +1,6 @@
+import ConversationItem from '@/Components/App/ConverstionItem';
 import TextInput from '@/Components/TextInput';
-import { PencilIcon, PencilSquareIcon } from '@heroicons/react/16/solid';
+import { PencilSquareIcon } from '@heroicons/react/16/solid';
 import { usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 
@@ -102,7 +103,7 @@ const ChatLayout = ({ children }) => {
                         selectedConversation ? "-ml-[100%] sm:ml-0" : ""
                     }`}
                 >
-                    <div className='flex items-center justify-between py-2 px-3 text-xl font-medium'>
+                    <div className='flex items-center justify-between py-2 px-3 text-xl font-medium text-gray-200'>
                         My conversations
                         <div
                             className='tooltip tooltip-left'
@@ -125,7 +126,7 @@ const ChatLayout = ({ children }) => {
                     <div className='flex-1 overflow-auto'>
                         {sortedConversations && 
                             sortedConversations.map((conversation) => (
-                                <ConverstionItem 
+                                <ConversationItem 
                                     key={`${
                                         conversation.is_group
                                             ? 'group_'

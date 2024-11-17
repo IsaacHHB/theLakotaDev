@@ -94,6 +94,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'is_group' => false,
             'is_user' => true,
             'is_admin' => (bool) $this->is_admin,
+            'blocked_at' => $this->blocked_at,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'last_message' => $this->last_message,

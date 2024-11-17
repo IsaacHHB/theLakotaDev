@@ -9,7 +9,7 @@ const ConversationItem = ({
     online = null,
 }) => {
     const page = usePage();
-    const user = page.props.auth.user;
+    const currentUser = page.props.auth.user;
 
     let classes = " border-transparent";
     if (selectedConversation) {
@@ -72,7 +72,7 @@ const ConversationItem = ({
                 )}
             </div>
             {conversation.is_user && currentUser.is_admin && (
-                <UserOptionsDropdown user={conversation} />
+                <UserOptionsDropdown conversation={conversation} />
             )}
         </Link>
     );
