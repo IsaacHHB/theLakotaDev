@@ -7,11 +7,51 @@ import {
     PaperClipIcon,
 } from "@heroicons/react/24/solid";
 import NewMessageInput from '@/Components/App/NewMessageInput';
+import axios from 'axios';
 
 const MessageInput = ({ conversation = null }) => {
     const [newMessage, setNewMessage] = useState('');
     const [inputErrorMessages, setInputErrorMessages] = useState("");
     const [messageSending, setMessageSending] = useState(false);
+
+    const onSendClick = () => {
+        if (newMessage.trim() === "") {
+            setInputErrorMessages("Please proved a message or upload attachments.");
+
+            setTimeout(() => {
+                setInputErrorMessages("");
+            }, 3000);
+            return;
+        }
+
+        const formData = new FormData();
+
+        formData.append('message', newMessage);
+        
+        if(conversation.is_user){
+            formData.append('receiver_id', conversation.id);
+        } else if (conversation.is_group) {
+            formData.append('group_id', conversation.id);
+        }
+
+        setMessageSending(true);
+        axios.post(route('message.store'), formData, {
+            onUploadProgress: (progressEvent) => {
+                const progress = Math.round(
+                    (progressEvent.loaded / progressEvent.total) * 100
+                );
+                console.log(progress);
+            }
+        }).then((response) => {
+            setNewMessage('');
+            setMessageSending(false);
+        }).catch((error) => {
+            console.error(error);
+            setMessageSending(false);
+        });
+
+    };
+
 
     return (
         <div className="flex flex-wrap items-start border-t border-slate-700 py-3">
@@ -38,10 +78,14 @@ const MessageInput = ({ conversation = null }) => {
                 <div className='flex '>
                     <NewMessageInput
                         value={newMessage}
+                        onSend={onSendClick}
                         onChange={(e) => setNewMessage(e.target.value)}
                     />
 
-                    <button className='btn btn-info rounded-l-none'>
+                    <button 
+                        onClick={onSendClick}
+                        className='btn btn-info rounded-l-none'
+                    >
                         {messageSending && (
                             <span className='loading loading-spinner loading-xs'></span>
                         )}
