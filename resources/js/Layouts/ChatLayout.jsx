@@ -12,12 +12,7 @@ const ChatLayout = ({ children }) => {
     const [sortedConversations, setSortedConversations] = useState([]);
     const [onlineUsers, setOnlineUsers] = useState({});
 
-    console.log('conversations from props:', page.props);
-
     const isUserOnline = (userId) => onlineUsers[userId];
-
-    console.log(conversations);
-    console.log(selectedConversation);
 
     const onSearch = (e) => {
         const search = e.target.value.toLowerCase();
