@@ -4,6 +4,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { ChatBubbleLeftRightIcon } from '@heroicons/react/24/solid';
 import ConversationHeader from '@/Components/App/ConversationHeader';
 import MessageItem from '@/Components/App/MessageItem';
+import MessageInput from '@/Components/App/MessageInput';
 
 function Dashboard({ auth, selectedConversation = null, messages = null }) {
     const [localMessages, setLocalMessages] = useState([]);
@@ -57,7 +58,7 @@ function Dashboard({ auth, selectedConversation = null, messages = null }) {
                             </div>
                         )}
                     </div>
-                    {/* <MessageInput conversation={selectedConversation} /> */}
+                    <MessageInput conversation={selectedConversation} />
                 </>
             )}
         </>
