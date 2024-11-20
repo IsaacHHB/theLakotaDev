@@ -12,6 +12,8 @@ function Dashboard({ auth, selectedConversation = null, messages = null }) {
     const [localMessages, setLocalMessages] = useState([]);
     const [scrollFromBottom, setScrollFromBottom] = useState(null);
     const [noMoreMessages, setNoMoreMessages] = useState(false);
+    const [showAttachmentPreview, setShowAttachmentPreview] = useState(false);
+    const [previewAttachment, setPreviewAttachment] = useState({});
     const loadMoreIntersect = useRef(null);
     const messagesCtrRef = useRef(null);
     const { on } = useEventBus();
@@ -60,6 +62,14 @@ function Dashboard({ auth, selectedConversation = null, messages = null }) {
                 });
             });
     }, [localMessages, noMoreMessages]);
+
+    const onAttachmentClick = (attachment, index) => {
+        setPreviewAttachment({
+            attachment,
+            index,
+        })
+        setShowAttachmentPreview(true);
+    };
 
     useEffect(() => {
         setTimeout(() => {
@@ -155,6 +165,15 @@ function Dashboard({ auth, selectedConversation = null, messages = null }) {
                     </div>
                     <MessageInput conversation={selectedConversation} />
                 </>
+            )}
+S
+            {previewAttachment.attachment && (
+                <AttachmentPreviewModal
+                    attachment={previewAttachment.attachment}
+                    index={previewAttachment.index}
+                    show={showAttachmentPreview}
+                    onClose={() => setShowAttachmentPreview(false)}
+                />
             )}
         </>
     );

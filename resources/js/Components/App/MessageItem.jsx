@@ -4,7 +4,7 @@ import React from "react";
 import UserAvatar from "@/Components/App/UserAvatar";
 import { formatMessageDateLong } from "@/Helpers";
 
-const MessageItem = ({ message }) => {
+const MessageItem = ({ message, attachmentClick }) => {
     const currentUser = usePage().props.auth.user;
 
     return (
@@ -43,6 +43,10 @@ const MessageItem = ({ message }) => {
                             {message.message}
                         </ReactMarkdown>
                     </div>
+                    <MessageAttachments
+                        attachments={message.attachments}
+                        attachmentClick={attachmentClick}
+                    />
                 </div>
             </div>
         </div>

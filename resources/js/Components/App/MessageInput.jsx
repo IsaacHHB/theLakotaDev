@@ -5,6 +5,7 @@ import {
     HandThumbUpIcon,
     PaperAirplaneIcon,
     PaperClipIcon,
+    XCircleIcon,
 } from "@heroicons/react/24/solid";
 import NewMessageInput from '@/Components/App/NewMessageInput';
 import EmojiPicker from 'emoji-picker-react';
@@ -15,6 +16,23 @@ const MessageInput = ({ conversation = null }) => {
     const [newMessage, setNewMessage] = useState('');
     const [inputErrorMessages, setInputErrorMessages] = useState("");
     const [messageSending, setMessageSending] = useState(false);
+    const [chosenFiles, setChosenFiles] = useState([]);
+    const [uploadProgress, setUploadProgress] = useState(0);
+
+    const onFileChange = (e) => {
+        setChosenFiles(e.target.files);
+
+        const updatedFiles = [...files].map((file) => {
+            return {
+                file:file,
+                url: URL.createObjectURL(file),
+            };
+        });
+
+        setChosenFiles((prevFiles) => {
+            return [...prevFiles, ...updatedFiles];
+        });
+    };
 
     const onSendClick = () => {
         if (messageSending) {
@@ -31,6 +49,10 @@ const MessageInput = ({ conversation = null }) => {
 
         const formData = new FormData();
 
+        chosenFiles.forEach((file) => {
+            formData.append('attachments[]', file.file);
+        });
+
         formData.append('message', newMessage);
 
         if(conversation.is_user){
@@ -46,13 +68,20 @@ const MessageInput = ({ conversation = null }) => {
                     (progressEvent.loaded / progressEvent.total) * 100
                 );
                 console.log(progress);
+                setUploadProgress(progress);
             }
         }).then((response) => {
             setNewMessage('');
             setMessageSending(false);
+            setUploadProgress(0);
+            setChosenFiles([]);
         }).catch((error) => {
-            console.error(error);
             setMessageSending(false);
+            setChosenFiles([]);
+            const message = error?.response?.data?.message;
+            setInputErrorMessages(
+                message || "An error occurred while sending the message."
+            );
         });
 
     };
@@ -114,11 +143,60 @@ const MessageInput = ({ conversation = null }) => {
                         <span className='hidden sm:inline'>Send</span>
                     </button>
                 </div>
+                {!!uploadProgress && (
+                    <progress
+                        className='progress progress-info w-56'
+                        value={uploadProgress}
+                        max='100'
+                    ></progress>
+                )}
                 {inputErrorMessages && (
                     <div className='text-red-400 text-xs mt-1'>
                         {inputErrorMessages}
                     </div>
                 )}
+                <div className='flex flex-wrap gap-1 mt-2'>
+                    {chosenFiles.map((file) => (
+                        <div 
+                            key={file.file.name} 
+                            className={
+                                `relative flex justify-between cursor-pointer ` +
+                                (!isImage(file.file) ? " w-[240px]" : "")
+                            }
+                        >
+                            {isImage(file.file) && (
+                                <img
+                                    src={file.url}
+                                    alt={file.file.name}
+                                    className='w-16 h-16 object-cover'
+                                />
+                            )}
+                            {isAudio(file.file) && (
+                                <CustomAudioPlayer
+                                    src={file}
+                                    showVolume={false}
+                                />
+                            )}
+                            {!isImage(file.file) && !isAudio(file.file) && (
+                                <AttachmentPreview file={file} />
+                            )}
+
+                            <button
+                                onClick={() =>
+                                    setChosenFiles(
+                                        chosenFiles.filter(
+                                            (f) => 
+                                                f.file.name !== file.file.name
+                                        )
+                                    )
+                                }
+                                className="absolute w-6 h-6 rounded-full bg-gray-800 -right-2 -top-2 text-gray-300 hover:text-gray-100 z-10"
+                            >
+                                <XCircleIcon className="w-6" />
+                            </button>
+                        </div>
+                    ))}
+                </div>
             </div>
             {/* <EmojiPicker /> */}
             <div className='order-3 xs:order-3 p-2 flex'>
