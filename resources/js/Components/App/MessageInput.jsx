@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import {
     PhotoIcon,
     FaceSmileIcon,
@@ -7,6 +7,8 @@ import {
     PaperClipIcon,
 } from "@heroicons/react/24/solid";
 import NewMessageInput from '@/Components/App/NewMessageInput';
+import EmojiPicker from 'emoji-picker-react';
+import { Popover, Transition } from '@headlessui/react'
 import axios from 'axios';
 
 const MessageInput = ({ conversation = null }) => {
@@ -55,6 +57,24 @@ const MessageInput = ({ conversation = null }) => {
 
     };
 
+    const onLikeClick = () => {
+        if (messageSending) {
+            return;
+        }
+
+        const data = {
+            message: '👍'
+        };
+
+        if(conversation.is_user){
+            data['receiver_id'] = conversation.id;
+        } else if (conversation.is_group) {
+            data['group_id'] = conversation.id;
+        }
+
+        axios.post(route('message.store'), data);
+    };
+
 
     return (
         <div className="flex flex-wrap items-start border-t border-slate-700 py-3">
@@ -100,11 +120,22 @@ const MessageInput = ({ conversation = null }) => {
                     </div>
                 )}
             </div>
+            {/* <EmojiPicker /> */}
             <div className='order-3 xs:order-3 p-2 flex'>
-                <button className='p-1 text-gray-400 hover:text-gray-300'>
-                    <FaceSmileIcon className='w-6 h-6' />
-                </button>
-                <button className='p-1 text-gray-400 hover:text-gray-300'>
+                <Popover className='relative'>
+                    <Popover.Button className='p-1 text-gray-400 hover:text-gray-300'>
+                        <FaceSmileIcon className='w-6 h-6' />
+                    </Popover.Button>
+                    <Popover.Panel className="absolute z-10 right-0 bottom-full">
+                        <EmojiPicker
+                            theme='dark'
+                            onEmojiClick={(e) => 
+                                setNewMessage(newMessage + e.emoji)
+                            }
+                        />
+                    </Popover.Panel>
+                </Popover>
+                <button onClick={onLikeClick} className='p-1 text-gray-400 hover:text-gray-300'>
                     <HandThumbUpIcon className='w-6 h-6' />
                 </button>
             </div>
