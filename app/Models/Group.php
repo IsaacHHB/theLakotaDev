@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+use Carbon\Carbon;
+
 class Group extends Model
 {
     use HasFactory;
@@ -59,7 +61,9 @@ class Group extends Model
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'last_message' => $this->last_message,
-            'last_message_date' => $this->last_message_date,
+            'last_message_date' => $this->last_message_date 
+                ? Carbon::parse($this->last_message_date)->setTimezone('America/Los_Angeles')->toDateTimeString() 
+                : null,
         ];
     }
 

@@ -8,6 +8,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 
+use Carbon\Carbon;
+
 class User extends Authenticatable implements MustVerifyEmail
 {
     // use HasFactory, Notifiable;
@@ -98,7 +100,9 @@ class User extends Authenticatable implements MustVerifyEmail
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'last_message' => $this->last_message,
-            'last_message_date' => $this->last_message_date,
+            'last_message_date' => $this->last_message_date 
+                ? Carbon::parse($this->last_message_date)->setTimezone('America/Los_Angeles')->toDateTimeString() 
+                : null,
         ];
     }
 }
