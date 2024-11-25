@@ -5,8 +5,10 @@ import { ChatBubbleLeftRightIcon } from '@heroicons/react/24/solid';
 import ConversationHeader from '@/Components/App/ConversationHeader';
 import MessageItem from '@/Components/App/MessageItem';
 import MessageInput from '@/Components/App/MessageInput';
+import AttachmentPreviewModal from '@/Components/App/AttachmentPreviewModal';
 import { useEventBus } from '@/EventBus';
 import axios from 'axios';
+
 
 function Dashboard({ auth, selectedConversation = null, messages = null }) {
     const [localMessages, setLocalMessages] = useState([]);
@@ -158,6 +160,7 @@ function Dashboard({ auth, selectedConversation = null, messages = null }) {
                                     <MessageItem
                                         key={message.id}
                                         message={message}
+                                        attachmentClick={onAttachmentClick}
                                     />
                                 ))}
                             </div>
@@ -166,7 +169,7 @@ function Dashboard({ auth, selectedConversation = null, messages = null }) {
                     <MessageInput conversation={selectedConversation} />
                 </>
             )}
-S
+
             {previewAttachment.attachment && (
                 <AttachmentPreviewModal
                     attachment={previewAttachment.attachment}

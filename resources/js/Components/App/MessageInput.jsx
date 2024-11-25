@@ -8,6 +8,8 @@ import {
     XCircleIcon,
 } from "@heroicons/react/24/solid";
 import NewMessageInput from '@/Components/App/NewMessageInput';
+import AttachmentPreview from '@/Components/App/AttachmentPreview';
+import { isAudio, isImage } from "@/Helpers";
 import EmojiPicker from 'emoji-picker-react';
 import { Popover, Transition } from '@headlessui/react'
 import axios from 'axios';
@@ -20,25 +22,21 @@ const MessageInput = ({ conversation = null }) => {
     const [uploadProgress, setUploadProgress] = useState(0);
 
     const onFileChange = (e) => {
-        setChosenFiles(e.target.files);
-
-        const updatedFiles = [...files].map((file) => {
-            return {
-                file:file,
-                url: URL.createObjectURL(file),
-            };
-        });
-
-        setChosenFiles((prevFiles) => {
-            return [...prevFiles, ...updatedFiles];
-        });
+        const files = Array.from(e.target.files);
+    
+        const updatedFiles = files.map((file) => ({
+            file: file,
+            url: URL.createObjectURL(file),
+        }));
+    
+        setChosenFiles((prevFiles) => [...prevFiles, ...updatedFiles]);
     };
 
     const onSendClick = () => {
         if (messageSending) {
             return;
         }
-        if (newMessage.trim() === "") {
+        if (newMessage.trim() === "" && chosenFiles.length === 0) {
             setInputErrorMessages("Please proved a message or upload attachments.");
 
             setTimeout(() => {
@@ -53,6 +51,10 @@ const MessageInput = ({ conversation = null }) => {
             formData.append('attachments[]', file.file);
         });
 
+        for (let pair of formData.entries()) {
+            console.log(pair[0], pair[1]);
+        }
+
         formData.append('message', newMessage);
 
         if(conversation.is_user){
@@ -63,6 +65,9 @@ const MessageInput = ({ conversation = null }) => {
 
         setMessageSending(true);
         axios.post(route('message.store'), formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
             onUploadProgress: (progressEvent) => {
                 const progress = Math.round(
                     (progressEvent.loaded / progressEvent.total) * 100
@@ -113,6 +118,7 @@ const MessageInput = ({ conversation = null }) => {
                     <input 
                         type='file'
                         multiple
+                        onChange={onFileChange}
                         className='absolute left-0 top-0 right-0 bottom-0 z-20 opacity-0 cursor-pointer'
                     />
                 </button>
@@ -122,6 +128,7 @@ const MessageInput = ({ conversation = null }) => {
                         type='file'
                         multiple
                         accept='image/*'
+                        onChange={onFileChange}
                         className='absolute left-0 top-0 right-0 bottom-0 z-20 opacity-0 cursor-pointer'
                     />
                 </button>
