@@ -12,7 +12,11 @@ use App\Http\Controllers\MusicController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 
-Route::redirect('/', '/dashboard');
+use Inertia\Inertia;
+
+Route::get('/', function () {
+    return Inertia::render('Portfolio');
+});
 
 Route::get('env-check', function () {
     dd(app()->environment(), env('APP_DEBUG'), env('DB_DATABASE'));
