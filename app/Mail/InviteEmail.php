@@ -33,7 +33,7 @@ class InviteEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'You are invited to ' . $this->event->title,
+            subject: '**REMINDER** You are Attending ' . $this->event->title,
         );
     }
 
@@ -48,7 +48,7 @@ class InviteEmail extends Mailable
                 'invite' => $this->invite,
                 'event' => $this->event,
                 'encryptedCode' => $this->encryptedCode,
-                'inviteLink' => route('invite.index', ['encrypted' => $this->encryptedCode]),
+                'inviteLink' => route('invite.wedding', ['encrypted' => $this->encryptedCode]),
             ],
         );
     }

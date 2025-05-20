@@ -202,12 +202,13 @@ class EventController extends Controller
 
     public function sendAllInviteEmails(Event $event)
     {
-        $eventInvites = $event->invites;
+        // Filter invites where 'is_attending' is 1
+        $eventInvites = $event->invites()->where('is_attending', 1)->get();
     
         foreach ($eventInvites as $invite) {
             $encryptedCode = Crypt::encryptString($invite->invite_code);
     
-            // Mail::to($invite->email)->queue(new InviteEmail($invite, $event, $encryptedCode));
+            // Send the email
             Mail::to($invite->email)->send(new InviteEmail($invite, $event, $encryptedCode));
         }
     

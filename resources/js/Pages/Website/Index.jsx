@@ -121,7 +121,11 @@ export default function Index() {
                 <div className="relative z-10 py-12 px-4 bg-black bg-opacity-60 rounded-lg max-w-3xl mx-auto text-center mb-5">
                     <h2 className="text-4xl md:text-5xl font-great-vibes font-bold mb-6">Join Us at RedSmith Ranch</h2>
                     <p className="text-base md:text-lg mb-6">
-                        We are excited to celebrate our special day with you at the beautiful RedSmith Ranch. For your convenience, here are the directions:
+                        We are excited to celebrate our special day with you at the beautiful RedSmith Ranch.
+                    </p>
+                    <p className="text-base md:text-lg mb-6">
+                        The ceremony starts at 2:00 PM, and we ask that you do not arrive before 1:30 PM, unless you have been asked otherwise.
+                        For your convenience, here are the directions:
                     </p>
                     <a
                         href="https://www.google.com/maps/dir/?api=1&destination=19292+Atkins+Rd,+Lodi,+CA+95240"
