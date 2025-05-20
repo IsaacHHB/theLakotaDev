@@ -8,6 +8,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\InviteResponseController;
 use App\Http\Controllers\InviteController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\MusicController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -45,6 +46,12 @@ Route::get('/expired', [InviteResponseController::class, 'expired'])
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
+
+    Route::get('/chat/{user}', [MessageController::class, 'byUser'])->name('chat.user');
+    Route::get('/group/{group}', [MessageController::class, 'byGroup'])->name('chat.group');
+    Route::post('message', [MessageController::class, 'store'])->name('message.store');
+    Route::delete('message/{message}', [MessageController::class, 'destroy'])->name('message.destroy');
+    Route::get('message/older/{message}', [MessageController::class, 'loadOlder'])->name('message.loadOlder');
 
     Route::resource('event', EventController::class);
 

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('music_suggestions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('event_id')->constrained('event')->onDelete('cascade');
+            $table->foreignId('event_id')->constrained('events')->onDelete('cascade');
             $table->foreignId('event_invite_id')->constrained('event_invites')->onDelete('cascade');
             $table->string('artist');
             $table->string('title');
