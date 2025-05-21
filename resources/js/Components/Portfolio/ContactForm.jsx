@@ -1,8 +1,8 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 
-// Custom Captcha Component
-const CustomCaptcha = ({ onVerify }) => {
+// Custom Captcha Component with forwardRef
+const CustomCaptcha = forwardRef(({ onVerify }, ref) => {
     const [captchaText, setCaptchaText] = useState('');
     const [userInput, setUserInput] = useState('');
     const [isVerified, setIsVerified] = useState(false);
@@ -35,6 +35,13 @@ const CustomCaptcha = ({ onVerify }) => {
         setRefreshKey(prev => prev + 1);
         generateCaptcha();
     };
+    
+    // Expose methods to parent component via ref
+    useImperativeHandle(ref, () => ({
+        generateCaptcha,
+        verifyCaptcha,
+        refreshCaptcha
+    }));
     
     useEffect(() => {
         generateCaptcha();
@@ -119,7 +126,10 @@ const CustomCaptcha = ({ onVerify }) => {
             </div>
         </div>
     );
-};
+});
+
+// Add display name for better debugging
+CustomCaptcha.displayName = 'CustomCaptcha';
 
 export default function ContactForm() {
     const [formData, setFormData] = useState({
@@ -356,7 +366,7 @@ export default function ContactForm() {
                         )}
                     </div>
                     
-                    {/* Custom Captcha */}
+                    {/* Custom Captcha with ref properly passed */}
                     <div className="mt-6">
                         <CustomCaptcha onVerify={handleCaptchaVerify} ref={captchaRef} />
                         {errors.captcha && (

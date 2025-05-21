@@ -12,6 +12,15 @@ export default function Portfolio() {
     const sectionsRef = useRef({});
     const menuRef = useRef(null);
     
+    // Debug section existence
+    useEffect(() => {
+        console.log("Checking if sections exist:");
+        ['services', 'about', 'experience', 'skills', 'projects', 'contact'].forEach(id => {
+            const exists = document.getElementById(id) !== null;
+            console.log(`Section "${id}": ${exists ? 'Found' : 'Not found'}`);
+        });
+    }, []);
+    
     useEffect(() => {
         // Disable body scroll when menu is open
         if (isMenuOpen) {
@@ -48,6 +57,24 @@ export default function Portfolio() {
         };
     }, []);
     
+    // Update section positions with a delay to ensure DOM is ready
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            const sections = ['services', 'about', 'experience', 'skills', 'projects', 'contact'];
+            sections.forEach(id => {
+                const section = document.getElementById(id);
+                if (section) {
+                    sectionsRef.current[id] = section.offsetTop;
+                    console.log(`Section ${id} position initialized: ${section.offsetTop}`);
+                } else {
+                    console.error(`Section with id "${id}" not found during initialization`);
+                }
+            });
+        }, 500); // Small delay to ensure DOM is ready
+        
+        return () => clearTimeout(timer);
+    }, []);
+    
     useEffect(() => {
         const handleScroll = () => {
             setScrolled(window.scrollY > 50);
@@ -64,15 +91,6 @@ export default function Portfolio() {
                 }
             });
         };
-        
-        // Initialize section positions
-        const sections = ['services', 'about', 'experience', 'skills', 'projects', 'contact'];
-        sections.forEach(id => {
-            const section = document.getElementById(id);
-            if (section) {
-                sectionsRef.current[id] = section.offsetTop;
-            }
-        });
         
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
@@ -94,7 +112,9 @@ export default function Portfolio() {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
+    // Modified scrollToSection function to be more reliable
     const scrollToSection = (id) => {
+        // Get the section again right when the function is called
         const section = document.getElementById(id);
         if (section) {
             // Adjust offset based on screen size
@@ -105,6 +125,9 @@ export default function Portfolio() {
             });
             setActiveTab(id);
             setIsMenuOpen(false);
+            console.log(`Scrolling to section ${id} at position ${section.offsetTop - offset}`);
+        } else {
+            console.error(`Section with id "${id}" not found`);
         }
     };
 
@@ -316,30 +339,22 @@ export default function Portfolio() {
                                 </div>
                                 <p className="text-lg mb-6 max-w-lg">Crafting modern web applications & digital solutions for businesses that make an impact</p>
                                 <div className="flex flex-wrap gap-4">
-                                    <motion.a 
-                                        href="#contact" 
+                                    <motion.button 
                                         className="bg-white text-indigo-600 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors shadow-md"
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            scrollToSection('contact');
-                                        }}
+                                        onClick={() => scrollToSection('contact')}
                                     >
                                         Hire Me
-                                    </motion.a>
-                                    <motion.a 
-                                        href="#projects" 
+                                    </motion.button>
+                                    <motion.button 
                                         className="border-2 border-white text-white px-6 py-3 rounded-lg font-medium hover:bg-white hover:text-indigo-600 transition-colors"
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            scrollToSection('projects');
-                                        }}
+                                        onClick={() => scrollToSection('projects')}
                                     >
                                         View Portfolio
-                                    </motion.a>
+                                    </motion.button>
                                 </div>
                             </motion.div>
                             <motion.div 
@@ -414,12 +429,8 @@ export default function Portfolio() {
                         </nav>
                         
                         <div className="hidden md:block">
-                            <motion.a 
-                                href="#contact" 
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    scrollToSection('contact');
-                                }}
+                            <motion.button 
+                                onClick={() => scrollToSection('contact')}
                                 className={`px-5 py-2 rounded-full text-sm font-medium transition-all shadow-md ${
                                     scrolled 
                                         ? 'bg-indigo-700 text-white hover:bg-indigo-800' 
@@ -429,7 +440,7 @@ export default function Portfolio() {
                                 whileTap={{ scale: 0.95 }}
                             >
                                 Contact Me
-                            </motion.a>
+                            </motion.button>
                         </div>
                     </div>
                 </div>
@@ -487,17 +498,13 @@ export default function Portfolio() {
                                     
                                     {/* Contact button in mobile menu */}
                                     <div className="mt-8 py-6 border-t border-gray-100">
-                                        <motion.a 
-                                            href="#contact" 
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                scrollToSection('contact');
-                                            }}
+                                        <motion.button 
+                                            onClick={() => scrollToSection('contact')}
                                             className="block w-full py-3 px-4 bg-indigo-600 text-white text-center font-medium rounded-lg hover:bg-indigo-700 transition-colors"
                                             whileTap={{ scale: 0.97 }}
                                         >
                                             Contact Me
-                                        </motion.a>
+                                        </motion.button>
                                     </div>
                                     
                                     {/* Social links in mobile menu */}
@@ -950,12 +957,8 @@ export default function Portfolio() {
                                             animate={{ opacity: 1, x: 0 }}
                                             transition={{ delay: 0.3 + (index * 0.1) }}
                                         >
-                                            <motion.a 
-                                                href={`#${item.toLowerCase()}`} 
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-                                                    scrollToSection(item.toLowerCase());
-                                                }}
+                                            <motion.button 
+                                                onClick={() => scrollToSection(item.toLowerCase())}
                                                 className="text-gray-300 hover:text-white transition-colors flex items-center group"
                                                 whileHover={{ x: 5 }}
                                             >
@@ -971,7 +974,7 @@ export default function Portfolio() {
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                                                 </motion.svg>
                                                 {item}
-                                            </motion.a>
+                                            </motion.button>
                                         </motion.li>
                                     ))}
                                 </ul>
@@ -990,12 +993,8 @@ export default function Portfolio() {
                                         isaac@thelakotadev.com
                                     </a>
                                 </p>
-                                <motion.a 
-                                    href="#contact" 
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        scrollToSection('contact');
-                                    }}
+                                <motion.button 
+                                    onClick={() => scrollToSection('contact')}
                                     className="inline-block mt-2 px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 text-white font-medium shadow-lg relative overflow-hidden group"
                                     whileHover={{ 
                                         scale: 1.05,
@@ -1005,7 +1004,7 @@ export default function Portfolio() {
                                 >
                                     <span className="relative z-10">Send Me a Message</span>
                                     <span className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-600 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300"></span>
-                                </motion.a>
+                                </motion.button>
                             </motion.div>
                         </div>
                         
